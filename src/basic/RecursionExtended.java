@@ -37,7 +37,7 @@ public class RecursionExtended {
     private static int findMaximumTotal(int[][] triangle, int row, int col) {
         if (row == triangle.length - 1) {
             return triangle[row][col];
-        }
+        }//TODO: code entvergewaltigen
         int leftPathSum = findMaximumTotal(triangle, row + 1, col);
         int rightPathSum = findMaximumTotal(triangle, row + 1, col + 1);
         return triangle[row][col] + Math.max(leftPathSum, rightPathSum);
