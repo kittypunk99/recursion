@@ -51,7 +51,7 @@ public class RecursionExtended {
         double x = 2;
         int n = 10;
         System.out.println(x + " hoch " + n + " ist " + zahlHoch(x, n));
-        String filename = "resources/numberTriangle.txt";
+        String filename = "resources/numberTriangle.txt";//asdfasf
         System.out.println("Maximum total in triangle is " + findMaxTotal(readTriangleFromFile(filename)));
 
     }
