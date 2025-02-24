@@ -36,7 +36,6 @@ public class RecursionExtended {
         }
     }
 
-
     private static int findMaxTotal(int[][] triangle) {
         for (int row = triangle.length - 2; row >= 0; row--) {
             for (int col = 0; col <= row; col++) {
