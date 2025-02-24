@@ -1,8 +1,9 @@
 package basic;
 
-import java.io.BufferedReader;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 public class RecursionExtended {
     public static double zahlHoch(double x, int n) {
@@ -17,39 +18,42 @@ public class RecursionExtended {
         }
     }
 
-    public static int findMaximumTotal(String filename) {
-        try (BufferedReader b = Files.newBufferedReader(Path.of(filename))) {
-            int[][] triangle = b.lines().map(line -> line.split(" ")).map(arr -> {
-                int[] row = new int[arr.length];
-                for (int i = 0; i < arr.length; i++) {
-                    row[i] = Integer.parseInt(arr[i]);
+
+    private static int[][] readTriangleFromFile(String filename) {
+        try {
+            List<String> lines = Files.readAllLines(Path.of(filename));
+            int[][] triangle = new int[lines.size()][];
+            for (int i = 0; i < lines.size(); i++) {
+                String[] parts = lines.get(i).split(" ");
+                triangle[i] = new int[parts.length];
+                for (int j = 0; j < parts.length; j++) {
+                    triangle[i][j] = Integer.parseInt(parts[j]);
                 }
-                return row;
-            }).toArray(int[][]::new);
-            System.out.println(triangle.length);
-            return findMaximumTotal(triangle, 0, 0);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return -1;
+            }
+            return triangle;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    private static int findMaximumTotal(int[][] triangle, int row, int col) {
-        if (row == triangle.length - 1) {
-            return triangle[row][col];
+
+    private static int findMaxTotal(int[][] triangle) {
+        for (int row = triangle.length - 2; row >= 0; row--) {
+            for (int col = 0; col <= row; col++) {
+                triangle[row][col] += Math.max(triangle[row + 1][col], triangle[row + 1][col + 1]);
+            }
         }
-        int leftPathSum = findMaximumTotal(triangle, row + 1, col);
-        int rightPathSum = findMaximumTotal(triangle, row + 1, col + 1);
-        return triangle[row][col] + Math.max(leftPathSum, rightPathSum);
+        return triangle[0][0];
     }
+
+
 
     public static void main(String[] args) {
         double x = 2;
         int n = 10;
         System.out.println(x + " hoch " + n + " ist " + zahlHoch(x, n));
         String filename = "resources/numberTriangle.txt";
-        System.out.println("Maximum total in triangle is " + findMaximumTotal(filename));
-        int[][] test = {{3}, {7, 4}, {2, 4, 6}, {8, 5, 9, 3}};
-        System.out.println(findMaximumTotal(test, 0, 0));
+        System.out.println("Maximum total in triangle is " + findMaxTotal(readTriangleFromFile(filename)));
+
     }
 }
