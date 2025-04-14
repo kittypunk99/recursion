@@ -37,14 +37,18 @@ public class RecursionExtended {
     }
 
     private static int findMaxTotal(int[][] triangle) {
-        for (int row = triangle.length - 2; row >= 0; row--) {
-            for (int col = 0; col <= row; col++) {
-                triangle[row][col] += Math.max(triangle[row + 1][col], triangle[row + 1][col + 1]);
-            }
-        }
-        return triangle[0][0];
+        return computeBottomUp(triangle, triangle.length - 2);
     }
 
+    private static int computeBottomUp(int[][] triangle, int row) {
+        if (row < 0) {
+            return triangle[0][0];  // final result is stored here
+        }
+        for (int col = 0; col < triangle[row].length; col++) {
+            triangle[row][col] += Math.max(triangle[row + 1][col], triangle[row + 1][col + 1]);
+        }
+        return computeBottomUp(triangle, row - 1);
+    }
 
 
     public static void main(String[] args) {
