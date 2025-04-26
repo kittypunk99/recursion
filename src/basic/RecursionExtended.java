@@ -42,7 +42,7 @@ public class RecursionExtended {
 
     private static int computeBottomUp(int[][] triangle, int row) {
         if (row < 0) {
-            return triangle[0][0];  // final result is stored here
+            return triangle[0][0];
         }
         for (int col = 0; col < triangle[row].length; col++) {
             triangle[row][col] += Math.max(triangle[row + 1][col], triangle[row + 1][col + 1]);
@@ -57,6 +57,6 @@ public class RecursionExtended {
         System.out.println(x + " hoch " + n + " ist " + zahlHoch(x, n));
         String filename = "resources/numberTriangle.txt";//asdfasf
         System.out.println("Maximum total in triangle is " + findMaxTotal(readTriangleFromFile(filename)));
-
+        Math.pow(2, 10);
     }
 }

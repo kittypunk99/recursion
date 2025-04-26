@@ -5,30 +5,24 @@ import java.util.Map;
 
 public class LongestCollatzSequence {
 
-    private static final Map<Long, Integer> collatzCache = new HashMap<>();
+    static Map<Long, Integer> cache = new HashMap<>();
 
-    public static int collatzSequenceLength(long n) {
-        if (n == 1) {
-            return 1;
-        }
-        if (collatzCache.containsKey(n)) {
-            return collatzCache.get(n);
-        }
-        int length;
-        if (n % 2 == 0) {
-            length = 1 + collatzSequenceLength(n / 2);
-        } else {
-            length = 1 + collatzSequenceLength(3 * n + 1);
-        }
-        collatzCache.put(n, length);
-        return length;
+    public static int collatz(long n) {
+        if (n == 1) return 1;
+        if (cache.containsKey(n)) return cache.get(n);
+
+        long next = (n % 2 == 0) ? n / 2 : 3 * n + 1;
+        int result = 1 + collatz(next);
+        cache.put(n, result);
+        return result;
     }
+
 
     public static void main(String[] args) {
         int maxLength = 0;
         int startingNumber = 0;
         for (int i = 1; i < 1_000_000; i++) {
-            int length = collatzSequenceLength(i);
+            int length = collatz(i);
             if (length > maxLength) {
                 maxLength = length;
                 startingNumber = i;

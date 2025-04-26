@@ -17,19 +17,20 @@ public class RecursionBasics {
         return count + zaehleSelbstlaute(s.substring(1));
     }
 
-    public static int coinSums(int n) {
-        int[] coins = {1, 2, 5, 10, 20, 50, 100, 200};
-        return coinSumsHelper(n, coins, coins.length - 1);
-    }
-
-    private static int coinSumsHelper(int n, int[] coins, int index) {
-        if (n == 0) {
+    public static int coinSumsRecursive(int amount, int[] coins, int index) {
+        if (amount == 0) {
             return 1;
         }
-        if (n < 0 || index < 0) {
+        if (amount < 0 || index < 0) {
             return 0;
         }
-        return coinSumsHelper(n - coins[index], coins, index) + coinSumsHelper(n, coins, index - 1);
+        return coinSumsRecursive(amount - coins[index], coins, index)
+                + coinSumsRecursive(amount, coins, index - 1);
+    }
+
+    public static int coinSums(int amount) {
+        int[] coins = {1, 2, 5, 10, 20, 50, 100, 200};
+        return coinSumsRecursive(amount, coins, coins.length - 1);
     }
 
     public static void main(String[] args) {
@@ -37,7 +38,7 @@ public class RecursionBasics {
         System.out.println("Fibonacci of " + n + " is " + fibonacci(n));
         String s = "Hallo Welt";
         System.out.println("Anzahl der Selbstlaute in \"" + s + "\" ist " + zaehleSelbstlaute(s));
-        System.out.println(coinSums(200));
+        System.out.println("coinSums(200) = " + coinSums(200));
     }
 
 
