@@ -1,10 +1,10 @@
+
+
 package adv;
-
 import java.io.*;
-import java.util.List;
+        import java.util.*;
 
-public class Sudoku {
-
+public class OptiSusoku {
 
     public static void main(String[] args) {
         List<String> files = List.of("resources/simple.sudoku", "resources/easy.sudoku", "resources/intermediate.sudoku", "resources/expert.sudoku");
@@ -40,18 +40,16 @@ public class Sudoku {
 
     static int[][] parse(String s) {
         int[][] grid = new int[9][9];
-        for (int i = 0; i < 81; i++) {
-            char c = s.charAt(i);
-            grid[i / 9][i % 9] = (c == '.') ? 0 : (c - '0');
-        }
+        for (int i = 0; i < 81; i++)
+            grid[i/9][i%9] = s.charAt(i) == '.' ? 0 : s.charAt(i) - '0';
         return grid;
     }
 
     static String toString(int[][] grid) {
-        StringBuilder sb = new StringBuilder(81);
+        StringBuilder sb = new StringBuilder();
         for (int[] row : grid)
             for (int val : row)
-                sb.append(val == 0 ? '.' : (char) ('0' + val));
+                sb.append(val == 0 ? "." : val);
         return sb.toString();
     }
 
@@ -71,75 +69,34 @@ public class Sudoku {
     static int[][] deepCopy(int[][] grid) {
         int[][] copy = new int[9][9];
         for (int i = 0; i < 9; i++)
-            System.arraycopy(grid[i], 0, copy[i], 0, 9);
+            copy[i] = Arrays.copyOf(grid[i], 9);
         return copy;
     }
 
     static boolean solve(int[][] grid) {
-        int[][] candidates = initCandidates(grid);
-        return backtrack(grid, candidates);
-    }
-
-    static int[][] initCandidates(int[][] grid) {
-        int[][] candidates = new int[9][9];
-        for (int row = 0; row < 9; row++)
-            for (int col = 0; col < 9; col++)
-                candidates[row][col] = (grid[row][col] == 0) ? 0x1FF : 0;
-        updateCandidates(grid, candidates);
-        return candidates;
-    }
-
-    static void updateCandidates(int[][] grid, int[][] candidates) {
-        for (int row = 0; row < 9; row++) {
-            for (int col = 0; col < 9; col++) {
-                int num = grid[row][col];
-                if (num != 0) eliminate(candidates, row, col, num);
-            }
-        }
-    }
-
-    static void eliminate(int[][] candidates, int row, int col, int num) {
-        int mask = ~(1 << (num - 1));
-        for (int i = 0; i < 9; i++) {
-            candidates[row][i] &= mask;
-            candidates[i][col] &= mask;
-            candidates[(row / 3) * 3 + i / 3][(col / 3) * 3 + i % 3] &= mask;
-        }
-    }
-
-    static boolean backtrack(int[][] grid, int[][] candidates) {
-        int minOptions = 10, targetRow = -1, targetCol = -1;
         for (int row = 0; row < 9; row++) {
             for (int col = 0; col < 9; col++) {
                 if (grid[row][col] == 0) {
-                    int options = Integer.bitCount(candidates[row][col]);
-                    if (options < minOptions) {
-                        minOptions = options;
-                        targetRow = row;
-                        targetCol = col;
-                        if (options == 1) break; // Schnell abbrechen bei 1 Option
+                    for (int num = 1; num <= 9; num++) {
+                        if (valid(grid, row, col, num)) {
+                            grid[row][col] = num;
+                            if (solve(grid)) return true;
+                            grid[row][col] = 0;
+                        }
                     }
+                    return false;
                 }
             }
-            if (minOptions == 1) break;
         }
+        return true;
+    }
 
-        if (targetRow == -1) return true; // Keine freie Zelle mehr
-
-        int[][] state = deepCopy(candidates);
-        int mask = candidates[targetRow][targetCol];
-        for (int num = 1; num <= 9; num++) {
-            if ((mask & (1 << (num - 1))) != 0) {
-                grid[targetRow][targetCol] = num;
-                candidates[targetRow][targetCol] = 0;
-                eliminate(candidates, targetRow, targetCol, num);
-
-                if (backtrack(grid, candidates)) return true;
-
-                grid[targetRow][targetCol] = 0;
-                candidates = deepCopy(state);
-            }
+    static boolean valid(int[][] grid, int row, int col, int num) {
+        for (int i = 0; i < 9; i++) {
+            if (grid[row][i] == num || grid[i][col] == num) return false;
+            if (grid[(row/3)*3+i/3][(col/3)*3+i%3] == num) return false;
         }
-        return false;
+        return true;
     }
 }
+
