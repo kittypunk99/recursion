@@ -3,7 +3,7 @@ package adv;
 import java.io.*;
 import java.util.List;
 
-public class Sudoku {
+public class CrackySudoku {
 
 
     public static void main(String[] args) {

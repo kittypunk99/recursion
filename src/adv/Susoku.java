@@ -4,7 +4,7 @@ package adv;
 import java.io.*;
         import java.util.*;
 
-public class OptiSusoku {
+public class Susoku {
 
     public static void main(String[] args) {
         List<String> files = List.of("resources/simple.sudoku", "resources/easy.sudoku", "resources/intermediate.sudoku", "resources/expert.sudoku");

@@ -1,49 +1,67 @@
 package adv;
 
 import java.util.ArrayList;
+
 import java.util.List;
 
 public class Damen {
+    private final int n;
+    private final List<List<String>> solutions;
+
+    public Damen(int n) {
+        this.n = n;
+        this.solutions = new ArrayList<>();
+    }
+
     public static void main(String[] args) {
         int n = 8;
-        Damen damen = new Damen();
-        List<List<String>> result = damen.solveNQueens(n);
-        for (List<String> res : result) {
-            System.out.println(res);
-        }
-        System.out.println("Anzahl der Lösungen für " + n + "-Damen: " + result.size());
+        Damen nQueens = new Damen(n);
+        nQueens.solve();
+        nQueens.printSolutions();
+        System.out.println("Anzahl der Lösungen: " + nQueens.solutions.size());
     }
 
-    public List<List<String>> solveNQueens(int n) {
-        List<List<String>> solutions = new ArrayList<>();
-        int limit = (1 << n) - 1;
-        solve(0, 0, 0, 0, n, limit, new ArrayList<>(), solutions);
-        return solutions;
+    public void solve() {
+        int[] board = new int[n];
+        placeQueens(board, 0);
     }
 
-    private void solve(int row, int cols, int diag1, int diag2, int n, int limit, List<Integer> current, List<List<String>> solutions) {
+    private void placeQueens(int[] board, int row) {
         if (row == n) {
-            solutions.add(buildChessNotation(current, n));
+            addSolution(board);
             return;
         }
-        int available = ~(cols | diag1 | diag2) & limit;
-        while (available != 0) {
-            int pick = available & -available;
-            available -= pick;
-            current.add(Integer.bitCount(pick - 1));
-            solve(row + 1, cols | pick, (diag1 | pick) << 1, (diag2 | pick) >> 1, n, limit, current, solutions);
-            current.removeLast();
+        for (int col = 0; col < n; col++) {
+            if (isSafe(board, row, col)) {
+                board[row] = col;
+                placeQueens(board, row + 1);
+            }
         }
     }
 
-    private List<String> buildChessNotation(List<Integer> current, int n) {
-        List<String> notation = new ArrayList<>();
-        for (int row = 0; row < current.size(); row++) {
-            int col = current.get(row);
-            char columnLetter = (char) ('A' + col);
-            int rowNumber = row + 1;
-            notation.add("" + columnLetter + rowNumber);
+    private boolean isSafe(int[] board, int row, int col) {
+        for (int i = 0; i < row; i++) {
+            if (board[i] == col || Math.abs(board[i] - col) == Math.abs(i - row)) {
+                return false;
+            }
         }
-        return notation;
+        return true;
+    }
+
+    private void addSolution(int[] board) {
+        List<String> solution = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            char column = (char) ('A' + board[i]);
+            solution.add(column + "" + (n - i));
+        }
+        solutions.add(solution);
+    }
+
+    public void printSolutions() {
+        int count = 1;
+        for (List<String> solution : solutions) {
+            System.out.println("Lösung " + count + ": " + String.join(" ", solution));
+            count++;
+        }
     }
 }
